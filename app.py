@@ -175,7 +175,7 @@ def _render_column_summary(profile_rows: list[dict]) -> None:
     ]
     st.dataframe(
         display_rows,
-        use_container_width=True,
+        width=True,
         hide_index=True,
     )
 
@@ -198,7 +198,7 @@ def _render_rule_table(rule_results: list[dict]) -> None:
                 "description": row["description"],
             }
         )
-    st.dataframe(display_rows, use_container_width=True, hide_index=True)
+    st.dataframe(display_rows, width=True, hide_index=True)
 
 
 def _render_charts(profile_rows: list[dict]) -> None:
@@ -249,7 +249,7 @@ def _render_flagged_rows(dataframe: pd.DataFrame, rule_result: dict) -> None:
     
     flagged_df = dataframe.iloc[flagged_indices].reset_index(drop=True)
     st.markdown(f"**Flagged rows** ({len(flagged_indices)} violations)")
-    st.dataframe(flagged_df, use_container_width=True, hide_index=True)
+    st.dataframe(flagged_df, width=True, hide_index=True)
 
 
 def _build_violations_csv(dataframe: pd.DataFrame, rule_results: list[dict]) -> bytes:
@@ -282,10 +282,10 @@ def _build_local_issue_queue(upload_history: list[dict]) -> list[dict]:
 
 with st.sidebar:
     st.header("Input")
-    if st.button("Reset session", use_container_width=True):
+    if st.button("Reset session", width=True):
         st.session_state.clear()
         st.rerun()
-    use_demo = st.button("Load demo dataset", use_container_width=True)
+    use_demo = st.button("Load demo dataset", width=True)
     uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
     expected_columns_input = st.text_input(
         "Required columns (comma separated)",
@@ -696,7 +696,7 @@ with queue_tab:
             "updated_at",
         ]
         existing_cols = [col for col in display_cols if col in filtered_queue.columns]
-        st.dataframe(filtered_queue[existing_cols], use_container_width=True, hide_index=True)
+        st.dataframe(filtered_queue[existing_cols], width=True, hide_index=True)
 
         finding_options = filtered_queue["finding_id"].dropna().tolist()
         if finding_options:
@@ -740,7 +740,7 @@ with analytics_tab:
         
         # Display trend
         st.markdown("**Upload history** (most recent first)")
-        st.dataframe(history_df, use_container_width=True, hide_index=True)
+        st.dataframe(history_df, width=True, hide_index=True)
         
         # Show trend charts
         left, right = st.columns(2)
