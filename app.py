@@ -46,6 +46,8 @@ elif (
     st.session_state.quality_gate_rules = dict(DEFAULT_QUALITY_GATE_RULES)
 if "diff_baseline_policy" not in st.session_state:
     st.session_state.diff_baseline_policy = "most_recent_same_source"
+if "required_columns_input" not in st.session_state:
+    st.session_state.required_columns_input = ""
 
 st.markdown(
     """
@@ -278,10 +280,10 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
     expected_columns_input = st.text_input(
         "Required columns (comma separated)",
-        value="customer_id, age",
-        help="Checks only whether these column names exist in the uploaded dataset.",
+        key="required_columns_input",
+        help="Optional. If provided, checks only whether these column names exist in the uploaded dataset.",
     )
-    st.caption("Required columns validates presence only. It does not validate values, ranges, or uniqueness.")
+    st.caption("Leave blank to accept any dataset schema. If set, this validates column presence only.")
     st.divider()
     st.markdown("### Workflow Settings")
     st.caption("Supabase: set `SUPABASE_URL` and `SUPABASE_KEY` env vars to persist runs/findings.")
