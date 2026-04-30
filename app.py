@@ -276,6 +276,9 @@ def _build_local_issue_queue(upload_history: list[dict]) -> list[dict]:
 
 with st.sidebar:
     st.header("Input")
+    if st.button("Reset session", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
     use_demo = st.button("Load demo dataset", use_container_width=True)
     uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
     expected_columns_input = st.text_input(
