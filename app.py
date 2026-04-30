@@ -1,16 +1,22 @@
 from pathlib import Path
 from datetime import datetime
 from uuid import uuid4
+import sys
 
 import pandas as pd
 import streamlit as st
 
-from src.anomaly_review_studio.io import load_csv_data, load_demo_data, validate_dataframe
-from src.anomaly_review_studio.profiling import profile_dataframe
-from src.anomaly_review_studio.reporting import build_markdown_report, build_pdf_report, build_rules_payload
-from src.anomaly_review_studio.rules import evaluate_rules, generate_rules, Rule
-from src.anomaly_review_studio.store import SupabaseStore
-from src.anomaly_review_studio.workflow import DEFAULT_QUALITY_GATE_RULES, compute_baseline_delta, enrich_rule_results, evaluate_quality_gates
+PROJECT_ROOT = Path(__file__).resolve().parent
+SRC_DIR = PROJECT_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from anomaly_review_studio.io import load_csv_data, load_demo_data, validate_dataframe
+from anomaly_review_studio.profiling import profile_dataframe
+from anomaly_review_studio.reporting import build_markdown_report, build_pdf_report, build_rules_payload
+from anomaly_review_studio.rules import evaluate_rules, generate_rules, Rule
+from anomaly_review_studio.store import SupabaseStore
+from anomaly_review_studio.workflow import DEFAULT_QUALITY_GATE_RULES, compute_baseline_delta, enrich_rule_results, evaluate_quality_gates
 
 APP_TITLE = "Anomaly Review Studio"
 APP_SUBTITLE = "Upload a CSV, inspect data quality, and generate review-ready rules."
