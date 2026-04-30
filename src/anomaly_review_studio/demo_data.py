@@ -1,41 +1,57 @@
 from __future__ import annotations
 
 from pathlib import Path
+import random
 
 import pandas as pd
 
 
-DEMO_ROWS = [
-    {"customer_id": 1001, "age": 34, "gender": "Female", "zipcode": "02139", "signup_source": "Web", "lifetime_value": 120.5},
-    {"customer_id": 1002, "age": 41, "gender": "Male", "zipcode": "94107", "signup_source": "Web", "lifetime_value": 98.0},
-    {"customer_id": 1003, "age": None, "gender": "Mle", "zipcode": "10001", "signup_source": "Mobile", "lifetime_value": 45.2},
-    {"customer_id": 1004, "age": 29, "gender": "Female", "zipcode": "ABCDE", "signup_source": "Partner", "lifetime_value": 200.0},
-    {"customer_id": 1005, "age": 52, "gender": "Female", "zipcode": "60601", "signup_source": "Web", "lifetime_value": None},
-    {"customer_id": 1005, "age": 52, "gender": "Female", "zipcode": "60601", "signup_source": "Web", "lifetime_value": 175.0},
-    {"customer_id": 1006, "age": 24, "gender": "Female", "zipcode": "30301", "signup_source": "Mobile", "lifetime_value": 39.8},
-    {"customer_id": 1007, "age": 67, "gender": "Male", "zipcode": "77002", "signup_source": "Partner", "lifetime_value": 640.0},
-    {"customer_id": 1008, "age": 15, "gender": "Female", "zipcode": "90012", "signup_source": "Web", "lifetime_value": 8.5},
-    {"customer_id": 1009, "age": 92, "gender": "Male", "zipcode": "10011", "signup_source": "Store", "lifetime_value": 12.0},
-    {"customer_id": 1010, "age": 43, "gender": "Unknown", "zipcode": "3310A", "signup_source": "Mobile", "lifetime_value": 333.4},
-    {"customer_id": 1011, "age": None, "gender": "Female", "zipcode": "60614-1234", "signup_source": "Email", "lifetime_value": 220.0},
-    {"customer_id": 1012, "age": 38, "gender": "Male", "zipcode": "73301", "signup_source": "Referral", "lifetime_value": 0.0},
-    {"customer_id": 1013, "age": 38, "gender": "male", "zipcode": "73301", "signup_source": "Referral", "lifetime_value": 5100.0},
-    {"customer_id": 1014, "age": 47, "gender": "Female", "zipcode": "98101", "signup_source": "Web", "lifetime_value": 415.2},
-    {"customer_id": 1015, "age": 61, "gender": "Female", "zipcode": "02139", "signup_source": "Partner", "lifetime_value": 920.0},
-    {"customer_id": 1016, "age": 31, "gender": "Non-Binary", "zipcode": "", "signup_source": "Mobile", "lifetime_value": 140.0},
-    {"customer_id": 1017, "age": 55, "gender": "Female", "zipcode": "99999", "signup_source": "Web", "lifetime_value": 300.0},
-    {"customer_id": 1018, "age": -2, "gender": "Male", "zipcode": "45202", "signup_source": "Store", "lifetime_value": 89.0},
-    {"customer_id": 1019, "age": 120, "gender": "Female", "zipcode": "19103", "signup_source": "Web", "lifetime_value": 67.0},
-    {"customer_id": 1020, "age": 44, "gender": "Female", "zipcode": "75201", "signup_source": "Web", "lifetime_value": 880.0},
-    {"customer_id": 1021, "age": 44, "gender": "Female", "zipcode": "75201", "signup_source": "Affiliate", "lifetime_value": 880.0},
-    {"customer_id": 1022, "age": 27, "gender": "Male", "zipcode": "11211", "signup_source": "Mobile", "lifetime_value": 75.4},
-    {"customer_id": 1023, "age": 36, "gender": "Female", "zipcode": "94107", "signup_source": "Web", "lifetime_value": ""},
-    {"customer_id": 1024, "age": None, "gender": "F", "zipcode": "07030", "signup_source": "Unknown", "lifetime_value": 130.0},
-]
-
-
 def build_demo_dataframe() -> pd.DataFrame:
-    return pd.DataFrame(DEMO_ROWS)
+    random.seed(42)
+    genders = ["Female", "Male", "Non-Binary"]
+    sources = ["Web", "Mobile", "Store", "Partner", "Referral", "Affiliate"]
+    zipcodes = ["02139", "94107", "10001", "30301", "60601", "75201", "19103", "11211", "77002", "98101"]
+
+    rows = []
+    for offset in range(200):
+        customer_id = 1000 + offset
+        row = {
+            "customer_id": customer_id,
+            "age": random.randint(18, 72),
+            "gender": random.choice(genders),
+            "zipcode": random.choice(zipcodes),
+            "signup_source": random.choice(sources),
+            "lifetime_value": round(random.uniform(20, 1200), 2),
+        }
+        rows.append(row)
+
+    anomaly_overrides = {
+        3: {"zipcode": "ABCDE"},
+        7: {"gender": "Mle"},
+        11: {"age": None},
+        15: {"lifetime_value": None},
+        22: {"signup_source": "Unknown"},
+        31: {"age": -4},
+        44: {"age": 121},
+        58: {"zipcode": "3310A"},
+        73: {"zipcode": ""},
+        95: {"gender": "F"},
+        111: {"lifetime_value": 9500.0},
+        127: {"lifetime_value": 0.0},
+        140: {"age": None, "zipcode": "60614-1234"},
+        166: {"signup_source": "Email"},
+        181: {"gender": "male"},
+    }
+    for index, patch in anomaly_overrides.items():
+        rows[index].update(patch)
+
+    rows[50]["customer_id"] = rows[49]["customer_id"]
+    rows[120]["customer_id"] = rows[119]["customer_id"]
+    rows[170]["zipcode"] = rows[169]["zipcode"]
+    rows[170]["age"] = rows[169]["age"]
+    rows[170]["lifetime_value"] = rows[169]["lifetime_value"]
+
+    return pd.DataFrame(rows)
 
 
 def write_demo_csv(path: Path) -> None:
