@@ -20,7 +20,7 @@ from anomaly_review_studio.workflow import DEFAULT_QUALITY_GATE_RULES, compute_b
 
 APP_TITLE = "Anomaly Review Studio"
 APP_SUBTITLE = "Upload a CSV, inspect data quality, and generate review-ready rules."
-DEMO_FILE = Path(__file__).parent / "data" / "demo_anomaly_review.csv"
+DEMO_FILE = Path(__file__).parent / "data" / "demo_anomaly_review_v2.csv"
 
 st.set_page_config(page_title=APP_TITLE, page_icon="🧭", layout="wide")
 

@@ -25,31 +25,30 @@ def build_demo_dataframe() -> pd.DataFrame:
         }
         rows.append(row)
 
-    anomaly_overrides = {
-        3: {"zipcode": "ABCDE"},
-        7: {"gender": "Mle"},
-        11: {"age": None},
-        15: {"lifetime_value": None},
-        22: {"signup_source": "Unknown"},
-        31: {"age": -4},
-        44: {"age": 121},
-        58: {"zipcode": "3310A"},
-        73: {"zipcode": ""},
-        95: {"gender": "F"},
-        111: {"lifetime_value": 9500.0},
-        127: {"lifetime_value": 0.0},
-        140: {"age": None, "zipcode": "60614-1234"},
-        166: {"signup_source": "Email"},
-        181: {"gender": "male"},
-    }
-    for index, patch in anomaly_overrides.items():
-        rows[index].update(patch)
+    for index in range(7, 200, 17):
+        rows[index]["zipcode"] = random.choice(["ABCDE", "33A10", "", "9999", "12-345"])
+    for index in range(11, 200, 19):
+        rows[index]["gender"] = random.choice(["Mle", "F", "male", "Unknown"])
+    for index in range(13, 200, 23):
+        rows[index]["age"] = None
+    for index in range(15, 200, 29):
+        rows[index]["lifetime_value"] = None
+    for index in range(18, 200, 31):
+        rows[index]["signup_source"] = random.choice(["Email", "Unknown", "Kiosk"])
+    for index in range(21, 200, 37):
+        rows[index]["age"] = random.choice([-4, 0, 121, 133])
+    for index in range(27, 200, 41):
+        rows[index]["lifetime_value"] = random.choice([0.0, 8900.0, 12500.0])
 
-    rows[50]["customer_id"] = rows[49]["customer_id"]
-    rows[120]["customer_id"] = rows[119]["customer_id"]
-    rows[170]["zipcode"] = rows[169]["zipcode"]
-    rows[170]["age"] = rows[169]["age"]
-    rows[170]["lifetime_value"] = rows[169]["lifetime_value"]
+    duplicate_pairs = [(50, 49), (77, 76), (120, 119), (161, 160)]
+    for target, source in duplicate_pairs:
+        rows[target]["customer_id"] = rows[source]["customer_id"]
+
+    near_duplicate_rows = [(170, 169), (190, 189)]
+    for target, source in near_duplicate_rows:
+        rows[target]["zipcode"] = rows[source]["zipcode"]
+        rows[target]["age"] = rows[source]["age"]
+        rows[target]["lifetime_value"] = rows[source]["lifetime_value"]
 
     return pd.DataFrame(rows)
 
